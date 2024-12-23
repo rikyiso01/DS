@@ -84,6 +84,23 @@ wheels = [
 ]
 
 [[package]]
+name = "ape-solidity"
+version = "0.8.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "eth-ape" },
+    { name = "eth-pydantic-types" },
+    { name = "ethpm-types" },
+    { name = "packaging" },
+    { name = "py-solc-x" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4a/9b/41d50b7ec9a06f58f299bbbc003b6d59e16d19050534c216151b7e65c2c8/ape-solidity-0.8.5.tar.gz", hash = "sha256:8200ca4d0d1df0608f14418a16cd98a730d65c3073450ad76e458bfda64e1535", size = 418307 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/2e/d07b6dba5a86bfd4f2cced0f5ada112a55dbb886552187ddc86b94aef7d4/ape_solidity-0.8.5-py3-none-any.whl", hash = "sha256:75094fd996ad0914cb2425598e0ec9329adc881050d55b4224d74f75dd994794", size = 29047 },
+]
+
+[[package]]
 name = "asttokens"
 version = "2.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -270,11 +287,15 @@ name = "contract"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "ape-solidity" },
     { name = "eth-ape" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "eth-ape", specifier = ">=0.8.22" }]
+requires-dist = [
+    { name = "ape-solidity", specifier = ">=0.8.5" },
+    { name = "eth-ape", specifier = ">=0.8.22" },
+]
 
 [[package]]
 name = "cytoolz"
@@ -1174,6 +1195,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ba/e5/d9bb73cc981d29446bfc3b547ddc67a1b5d07f27b277add2f46c12392fa0/py-multihash-0.2.3.tar.gz", hash = "sha256:f0ade4de820afdc4b4aaa40464ec86c9da5cae3a4578cda2daab4b0eb7e5b18d", size = 21358 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/31/04/9c0d173afcf3f06149b35de179e0e5d174db2c9e6466bac01215b45e9bb4/py_multihash-0.2.3-py2.py3-none-any.whl", hash = "sha256:a0602c99093587dfbf1634e2e8c7726de39374b0d68587a36093b4c237af6969", size = 7929 },
+]
+
+[[package]]
+name = "py-solc-x"
+version = "2.0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2a/42/60f33a2d32b1308656b9f1e49a478ea81e294d9aaba4404f83dc20e1d60e/py-solc-x-2.0.3.tar.gz", hash = "sha256:1b5fe26d5f4976b1fcc2b3276fb2fe182633bc35757a3abf3b9af5ac57ec2544", size = 77698 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9d/30/c2075d568e3cef46947089a07878cf8da1dde4e0c8a566e9b04c1ea0fec6/py_solc_x-2.0.3-py3-none-any.whl", hash = "sha256:ef131f2f0e708fcaf92068a38c7569920839d259fdaa9946af3393f1dc86c5b1", size = 18532 },
 ]
 
 [[package]]
