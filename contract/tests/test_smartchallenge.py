@@ -1,12 +1,15 @@
 from contextlib import contextmanager
 from typing import Any, Protocol
 from collections.abc import Iterator
+from eth_account.messages import encode_defunct
 from pytest import fixture
 from ape_test.accounts import TestAccount
 from ape.managers.project import LocalProject
 from eth_account import Account
 from random import choices, randint
 from dataclasses import dataclass
+from web3 import Web3, EthereumTesterProvider
+from ape import reverts
 
 ADDRESS_LENGTH = 32
 
@@ -14,8 +17,13 @@ ADDRESS_LENGTH = 32
 class SmartChallenge(Protocol):
     def getOwner(self) -> TestAccount: ...
     def getChallenges(self) -> list[object]: ...
-    def addChallenge(self, _: str, __: int, ___: int, sender: TestAccount): ...
-    def submitFlag(self,_:int,__:str,sender:TestAccount):...
+    def addChallenge(
+        self, flag: str, reward: int, score: int, /, *, sender: TestAccount
+    ): ...
+    def submitFlag(
+        self, challengeId: int, signature: str, /, *, sender: TestAccount
+    ): ...
+    def getMessageHash(self, address: TestAccount, id: int, /) -> bytes: ...
 
 
 @dataclass
@@ -43,6 +51,16 @@ def get_private_flag() -> str:
 
 def get_public_flag(private_flag: str) -> str:
     return Account.from_key(private_flag).address
+
+
+def get_flag_signature(
+    contract: SmartChallenge, private_flag: str, address: TestAccount, id: int
+) -> str:
+    w3 = Web3(EthereumTesterProvider())
+    msg = contract.getMessageHash(address, id)
+    message = encode_defunct(msg)
+    signed_message = w3.eth.account.sign_message(message, private_key=private_flag)
+    return signed_message.signature
 
 
 @contextmanager
@@ -83,8 +101,19 @@ def test_addChallenge(project: LocalProject, owner: TestAccount):
     assert actual == expected
 
 
-def test_submitFlag(project:LocalProject,owner:TestAccount,not_owner:TestAccount):
-    with deploy_contract(project,owner) as contract:
-        challenge=add_challenge(contract,owner)
-        contract.submitFlag(challenge.id,challenge.private_flag,sender=not_owner)
+def test_submitFlag_correct(project: LocalProject, owner: TestAccount, not_owner: TestAccount):
+    with deploy_contract(project, owner) as contract:
+        challenge = add_challenge(contract, owner)
+        signature = get_flag_signature(
+            contract, challenge.private_flag, not_owner, challenge.id
+        )
+        contract.submitFlag(challenge.id, signature, sender=not_owner)
 
+def test_submitFlag_wrong(project: LocalProject, owner: TestAccount, not_owner: TestAccount):
+    with deploy_contract(project, owner) as contract:
+        challenge = add_challenge(contract, owner)
+        signature = get_flag_signature(
+            contract, get_private_flag(), not_owner, challenge.id
+        )
+        with reverts("Incorrect Flag!"):
+            contract.submitFlag(challenge.id, signature, sender=not_owner)

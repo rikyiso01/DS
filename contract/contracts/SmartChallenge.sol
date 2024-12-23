@@ -123,26 +123,22 @@ contract SmartChallenge {
     }
 
     function submitFlag(uint _challengeId, bytes memory signature) public payable {
-        require(_challengeId>=challenges.length, "Challenge does not exist");
+        require(_challengeId<challenges.length, "Challenge does not exist");
         require(bytes(signature).length > 0, "Flag cannot be empty");
         require(!players.values[msg.sender].solvedChallenges.is_in[_challengeId], "Challenge already solved by this player");
 
         bool verified=verify(msg.sender,_challengeId, signature, challenges[_challengeId].publicFlag);
+        require(verified,"Incorrect Flag!");
 
+        emit ChallengeSubmitted("Correct answer!");
+        players.values[msg.sender].solvedChallenges.is_in[_challengeId] = true;
+        players.values[msg.sender].solvedChallenges.values.push(_challengeId);
 
-        if(verified){
-            emit ChallengeSubmitted("Correct answer!");
-            players.values[msg.sender].solvedChallenges.is_in[_challengeId] = true;
-            players.values[msg.sender].solvedChallenges.values.push(_challengeId);
+        // payUser(payable (msg.sender), challenges[_challengeId].reward);
 
-            payUser(payable (msg.sender), challenges[_challengeId].reward);
-
-            if (!players.is_in[msg.sender]) {
-                players.is_in[msg.sender]=true;
-                players.keys.push(msg.sender);
-            }
-        } else{
-            emit ChallengeSubmitted("Incorrect Flag!");
+        if (!players.is_in[msg.sender]) {
+            players.is_in[msg.sender]=true;
+            players.keys.push(msg.sender);
         }
     }
 
