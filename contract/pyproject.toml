@@ -1,0 +1,15 @@
+[project]
+name = "contract"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "eth-ape>=0.8.22",
+]
+
+[tool.ape]
+name="smart-challenge"
+
+[[tool.ape.plugins]]
+name = "solidity"
+version = "0.8.5"

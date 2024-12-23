@@ -15,7 +15,14 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        devShells.default = pkgs.mkShell { packages = [ pkgs.bashInteractive ]; };
+        devShells.default = pkgs.mkShell {
+          packages = [
+            pkgs.bashInteractive
+            pkgs.pnpm
+            pkgs.nodejs
+            pkgs.uv
+          ];
+        };
       }
     );
 }
