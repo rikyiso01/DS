@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-from time import sleep
 from typing import Any, Protocol
 from collections.abc import Iterator
 from eth_account.messages import encode_defunct
@@ -17,8 +16,8 @@ ADDRESS_LENGTH = 32
 
 
 class SmartChallenge(Protocol):
-    def getOwner(self) -> TestAccount: ...
-    def getChallenges(self) -> list[object]: ...
+    def owner(self) -> TestAccount: ...
+    def challenges(self) -> list[object]: ...
     def addChallenge(
         self, flag: str, reward: int, score: int, /, *, sender: TestAccount, value: int
     ): ...
@@ -110,7 +109,7 @@ def add_challenge(contract: SmartChallenge, owner: TestAccount) -> Challenge:
     return Challenge(private_flag, public_flag, reward, score, id)
 
 
-def test_getOwner(project: LocalProject, owner: TestAccount):
+def test_owner(project: LocalProject, owner: TestAccount):
     with deploy_contract(project, owner) as contract:
         actual = contract.owner()
     expected = owner
@@ -119,10 +118,10 @@ def test_getOwner(project: LocalProject, owner: TestAccount):
     assert actual == expected
 
 
-def test_addChallenge(project: LocalProject, owner: TestAccount):
+def test_challenges(project: LocalProject, owner: TestAccount):
     with deploy_contract(project, owner) as contract:
         challenge = add_challenge(contract, owner)
-        challenges = contract.getChallenges()
+        challenges = contract.challenges()
     actual: list[dict[str, Any]] = [vars(elem) for elem in challenges]
     expected = [
         {
@@ -131,7 +130,6 @@ def test_addChallenge(project: LocalProject, owner: TestAccount):
             "score": challenge.score,
         }
     ]
-    print()
     assert actual == expected
 
 
