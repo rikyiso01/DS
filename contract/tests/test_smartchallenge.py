@@ -9,7 +9,8 @@ from eth_account import Account
 from random import choices, randint
 from dataclasses import dataclass
 from web3 import Web3, EthereumTesterProvider
-from ape import reverts
+from ape import reverts  # type: ignore
+from ape_ethereum.transactions import Receipt
 
 ADDRESS_LENGTH = 32
 
@@ -18,12 +19,14 @@ class SmartChallenge(Protocol):
     def getOwner(self) -> TestAccount: ...
     def getChallenges(self) -> list[object]: ...
     def addChallenge(
-        self, flag: str, reward: int, score: int, /, *, sender: TestAccount
+        self, flag: str, reward: int, score: int, /, *, sender: TestAccount, value: int
     ): ...
     def submitFlag(
         self, challengeId: int, signature: str, /, *, sender: TestAccount
-    ): ...
+    ) -> Receipt: ...
     def getMessageHash(self, address: TestAccount, id: int, /) -> bytes: ...
+
+    ChallengeAdded: Any
 
 
 @dataclass
@@ -71,12 +74,15 @@ def deploy_contract(
 
 
 def add_challenge(contract: SmartChallenge, owner: TestAccount) -> Challenge:
-    reward = randint(0, 255)
-    score = randint(0, 255)
+    reward = randint(0, 10**6)
+    score = randint(0, 10**6)
     private_flag = get_private_flag()
     public_flag = get_public_flag(private_flag)
-    contract.addChallenge(public_flag, reward, score, sender=owner)
-    return Challenge(private_flag, public_flag, reward, score, 0)
+    contract.addChallenge(public_flag, reward, score, sender=owner, value=reward)
+    id: int = contract.ChallengeAdded.query("*", start_block=-1).iloc[-1][
+        "event_arguments"
+    ]["challengeId"]
+    return Challenge(private_flag, public_flag, reward, score, id)
 
 
 def test_getOwner(project: LocalProject, owner: TestAccount):
@@ -101,7 +107,9 @@ def test_addChallenge(project: LocalProject, owner: TestAccount):
     assert actual == expected
 
 
-def test_submitFlag_correct(project: LocalProject, owner: TestAccount, not_owner: TestAccount):
+def test_submitFlag_correct(
+    project: LocalProject, owner: TestAccount, not_owner: TestAccount
+):
     with deploy_contract(project, owner) as contract:
         challenge = add_challenge(contract, owner)
         signature = get_flag_signature(
@@ -109,11 +117,31 @@ def test_submitFlag_correct(project: LocalProject, owner: TestAccount, not_owner
         )
         contract.submitFlag(challenge.id, signature, sender=not_owner)
 
-def test_submitFlag_wrong(project: LocalProject, owner: TestAccount, not_owner: TestAccount):
+
+def test_submitFlag_wrong(
+    project: LocalProject, owner: TestAccount, not_owner: TestAccount
+):
     with deploy_contract(project, owner) as contract:
         challenge = add_challenge(contract, owner)
         signature = get_flag_signature(
             contract, get_private_flag(), not_owner, challenge.id
         )
-        with reverts("Incorrect Flag!"):
+        with reverts("Incorrect Flag!"):  # type: ignore
             contract.submitFlag(challenge.id, signature, sender=not_owner)
+
+
+def test_submitFlag_reward(
+    project: LocalProject, owner: TestAccount, not_owner: TestAccount
+):
+    start_balance = not_owner.balance
+    with deploy_contract(project, owner) as contract:
+        challenge = add_challenge(contract, owner)
+        signature = get_flag_signature(
+            contract, challenge.private_flag, not_owner, challenge.id
+        )
+        transaction = contract.submitFlag(challenge.id, signature, sender=not_owner)
+    actual = not_owner.balance
+    expected = (
+        start_balance + challenge.reward - transaction.gas_price * transaction.gas_used
+    )
+    assert actual == expected

@@ -29,13 +29,13 @@ contract SmartChallenge {
 
     Challenge[] public challenges;
     PlayersMap players;
-    address payable owner;
+    address owner;
 
     event ChallengeSubmitted(string returnValue);
     event ChallengeAdded(uint indexed challengeId, address _publicFlag, uint _reward, uint _score);
 
-    constructor() payable {
-        owner = payable(msg.sender);
+    constructor() {
+        owner = msg.sender;
     }
 
     modifier onlyOwner() {
@@ -50,6 +50,10 @@ contract SmartChallenge {
     function payUser(address payable recipient, uint amount) internal {
         require(address(this).balance >= amount, "Insufficient contract balance");
         recipient.transfer(amount);
+    }
+
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
     }
 
     function getMessageHash(
@@ -122,7 +126,7 @@ contract SmartChallenge {
         // implicitly return (r, s, v)
     }
 
-    function submitFlag(uint _challengeId, bytes memory signature) public payable {
+    function submitFlag(uint _challengeId, bytes memory signature) public {
         require(_challengeId<challenges.length, "Challenge does not exist");
         require(bytes(signature).length > 0, "Flag cannot be empty");
         require(!players.values[msg.sender].solvedChallenges.is_in[_challengeId], "Challenge already solved by this player");
@@ -134,7 +138,7 @@ contract SmartChallenge {
         players.values[msg.sender].solvedChallenges.is_in[_challengeId] = true;
         players.values[msg.sender].solvedChallenges.values.push(_challengeId);
 
-        // payUser(payable (msg.sender), challenges[_challengeId].reward);
+        payUser(payable (msg.sender), challenges[_challengeId].reward);
 
         if (!players.is_in[msg.sender]) {
             players.is_in[msg.sender]=true;
@@ -142,9 +146,11 @@ contract SmartChallenge {
         }
     }
 
-    function addChallenge(address _flag, uint8 _reward, uint8 _score) public onlyOwner {
+    function addChallenge(address _flag, uint _reward, uint _score) public payable onlyOwner {
+        require(msg.value==_reward,"You need to store the reward in the contract");
+        uint challengeId=challenges.length;
         challenges.push(Challenge(_flag, _reward,  _score));
-        emit ChallengeAdded(challenges.length-1, _flag, _reward, _score);
+        emit ChallengeAdded(challengeId, _flag, _reward, _score);
     }
 
     function getChallenges() public view returns (Challenge[] memory) {
