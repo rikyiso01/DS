@@ -21,6 +21,8 @@
             pkgs.pnpm
             pkgs.nodejs
             pkgs.uv
+            pkgs.docker
+            pkgs.docker-compose
           ];
         };
       }

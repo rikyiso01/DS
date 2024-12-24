@@ -1,0 +1,7 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "4173:4173"
+    environment:
+      CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
