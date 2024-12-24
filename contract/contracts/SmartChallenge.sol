@@ -29,13 +29,25 @@ contract SmartChallenge {
 
     Challenge[] public challenges;
     PlayersMap players;
-    address owner;
+    address public owner;
 
+    event Initialized(address owner);
+    event GetOwner(address owner);
     event ChallengeSubmitted(string returnValue);
     event ChallengeAdded(uint indexed challengeId, address _publicFlag, uint _reward, uint _score);
+    bool initialized = false;
 
-    constructor() {
-        owner = msg.sender;
+    // restricts the function to be executed only once
+    modifier initializer() {
+        require(initialized == false, "Already initialized");
+        initialized = true;
+        _;
+    }
+
+    // can be executed only once
+    function initialize(address _owner) public initializer {
+        owner=_owner;
+        emit Initialized(owner);
     }
 
     modifier onlyOwner() {
@@ -180,4 +192,6 @@ contract SmartChallenge {
         }
         return (players.keys, playerScores);
     }
+
+    function sus() public pure{}
 }
