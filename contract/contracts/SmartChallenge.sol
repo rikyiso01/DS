@@ -25,40 +25,34 @@ contract SmartChallenge {
         mapping(address=>Player) values;
         address[] keys;
         mapping(address=>bool) is_in;
-        bool $;
     }
 
-    Challenge[] public challenges;
-    PlayersMap public players;
+    address public implementation;
     address public owner;
+    Challenge[] public challenges;
+    PlayersMap players;
 
-    event Initialized(address owner);
     event GetOwner(address owner);
     event ChallengeSubmitted(string returnValue);
     event ChallengeAdded(uint indexed challengeId, address _publicFlag, uint _reward, uint _score);
-    bool initialized = false;
 
-    // restricts the function to be executed only once
-    modifier initializer() {
-        require(initialized == false, "Already initialized");
-        initialized = true;
-        _;
-    }
-
-    // can be executed only once
-    function initialize(address _owner) public initializer {
-        owner=_owner;
-        emit Initialized(owner);
-    }
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can perform this operation");
         _;
     }
 
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
     function payUser(address payable recipient, uint amount) internal {
         require(address(this).balance >= amount, "Insufficient contract balance");
         recipient.transfer(amount);
+    }
+
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
     }
 
     function getMessageHash(
@@ -156,5 +150,33 @@ contract SmartChallenge {
         uint challengeId=challenges.length;
         challenges.push(Challenge(_flag, _reward,  _score));
         emit ChallengeAdded(challengeId, _flag, _reward, _score);
+    }
+
+    function getChallenges() public view returns (Challenge[] memory) {
+        return challenges;
+    }
+
+    function getScore(address _player) public view returns (uint) {
+        uint result=0;
+        for(uint i=0;i<players.values[_player].solvedChallenges.values.length;i++){
+            result+=challenges[players.values[_player].solvedChallenges.values[i]].score;
+        }
+        return result;
+    }
+
+    function getPlayers() public view returns (address[] memory) {
+        return players.keys;
+    }
+
+    function isChallengeSolved(address playerAddress, uint challengeIndex) public view returns (bool) {
+        return players.values[playerAddress].solvedChallenges.is_in[challengeIndex];
+    }
+
+    function getScores() public view returns (address[] memory, uint[] memory) {
+        uint[] memory playerScores = new uint[](players.keys.length);
+        for (uint i = 0; i < players.keys.length; i++) {
+            playerScores[i]=getScore(players.keys[i]);
+        }
+        return (players.keys, playerScores);
     }
 }

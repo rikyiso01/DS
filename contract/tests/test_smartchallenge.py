@@ -16,8 +16,8 @@ ADDRESS_LENGTH = 32
 
 
 class SmartChallenge(Protocol):
-    def owner(self) -> TestAccount: ...
-    def challenges(self) -> list[object]: ...
+    def getOwner(self) -> TestAccount: ...
+    def getChallenges(self) -> list[object]: ...
     def addChallenge(
         self, flag: str, reward: int, score: int, /, *, sender: TestAccount, value: int
     ): ...
@@ -65,37 +65,38 @@ def get_flag_signature(
     signed_message = w3.eth.account.sign_message(message, private_key=private_flag)
     return signed_message.signature
 
+
 @contextmanager
 def deploy_normal_contract(
     project: LocalProject, owner: TestAccount
 ) -> Iterator[SmartChallenge]:
     yield owner.deploy(project.SmartChallenge)  # type: ignore
 
+
 @contextmanager
 def deploy_proxy_contract(
     project: LocalProject, owner: TestAccount
 ) -> Iterator[SmartChallenge]:
-    contract=owner.deploy(project.SmartChallenge)  # type: ignore
-    proxy=owner.deploy(project.SmartChallengeProxy,contract.address)  # type: ignore
-    result=Contract(proxy.address,contract_type=contract.contract_type) # type: ignore
-    print(result.Initialized.query("*", start_block=-1))
-    address = result.Initialized.query("*", start_block=-1).iloc[-1][
-        "event_arguments"
-    ]["owner"]
-    print(address)
+    contract = owner.deploy(project.SmartChallenge)  # type: ignore
+    proxy = owner.deploy(project.SmartChallengeProxy, contract.address)  # type: ignore
+    result: SmartChallenge = Contract(
+        proxy.address,  # type: ignore
+        contract_type=contract.contract_type,  # type: ignore
+    )
     yield result
+
 
 @contextmanager
 def deploy_contract(
     project: LocalProject, owner: TestAccount
 ) -> Iterator[SmartChallenge]:
-    with deploy_proxy_contract(project,owner) as contract:
+    with deploy_proxy_contract(project, owner) as contract:
         yield contract
 
-def get_last_event_field(event:Any,field:str)->Any:
-    return event.query("*", start_block=-1).iloc[-1][
-        "event_arguments"
-    ][field]
+
+def get_last_event_field(event: Any, field: str) -> Any:
+    return event.query("*", start_block=-1).iloc[-1]["event_arguments"][field]
+
 
 def add_challenge(contract: SmartChallenge, owner: TestAccount) -> Challenge:
     reward = randint(0, 10**6)
@@ -109,19 +110,17 @@ def add_challenge(contract: SmartChallenge, owner: TestAccount) -> Challenge:
     return Challenge(private_flag, public_flag, reward, score, id)
 
 
-def test_owner(project: LocalProject, owner: TestAccount):
+def test_getOwner(project: LocalProject, owner: TestAccount):
     with deploy_contract(project, owner) as contract:
-        actual = contract.owner()
+        actual = contract.getOwner()
     expected = owner
-    # print(get_last_event_field(contract.GetOwner,"owner"))
-    print(actual)
     assert actual == expected
 
 
-def test_challenges(project: LocalProject, owner: TestAccount):
+def test_addChallenge(project: LocalProject, owner: TestAccount):
     with deploy_contract(project, owner) as contract:
         challenge = add_challenge(contract, owner)
-        challenges = contract.challenges()
+        challenges = contract.getChallenges()
     actual: list[dict[str, Any]] = [vars(elem) for elem in challenges]
     expected = [
         {
@@ -171,15 +170,3 @@ def test_submitFlag_reward(
         start_balance + challenge.reward - transaction.gas_price * transaction.gas_used
     )
     assert actual == expected
-
-def test_sus(
-    project: LocalProject, owner: TestAccount
-):
-    with deploy_contract(project, owner) as contract:
-        contract.sus()
-
-def test_initialize(
-    project: LocalProject, owner: TestAccount
-):
-    with deploy_contract(project, owner) as contract:
-        contract.initialize(owner)
