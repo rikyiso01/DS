@@ -5,3 +5,11 @@ services:
       - "4173:4173"
     environment:
       CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
+  ipfs:
+    image: docker.io/ipfs/kubo:latest
+    volumes:
+      - ./ipfs/data:/import:ro
+      - ./ipfs/init.sh:/container-init.d/init.sh:ro
+    ports:
+      - 8080:8080
+
