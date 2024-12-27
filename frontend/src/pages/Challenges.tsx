@@ -27,17 +27,22 @@ export default function Challenges() {
     }
     (async () => {
       try {
+          console.log("CIAODHJSHDSHDSHDSHDSHJDHS");
+          console.log("Address is",CONTRACT_ADDRESS);
         const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
-        const owner = await contract.owner();
-        setOwner(owner);
+        // const owner = await contract.owner();
+        // setOwner(owner);
+        console.log("BEFORE CHALLENGES");
+        console.log("Owner is ",await contract.getOwner());
         const chainChallenges = await contract.getChallenges();
+        console.log("AFTER CHALLENGES");
         const list = await Promise.all(
           chainChallenges.map(async (ch: any[]) => {
             const cidUrl = IPFS_BASE_URL + ch[3];
             const data = await fetch(cidUrl).then((r) => r.json());
             return {
               key: +ch[0],
-              reward: +ch[2],
+              reward: +Number(ch[2]),
               name: data.name,
               description: data.description,
               category: data.category,
