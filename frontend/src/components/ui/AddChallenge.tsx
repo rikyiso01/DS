@@ -31,49 +31,52 @@ export default function AddChallenge() {
 
   return (
     <Dialog.Root>
-      {/* The button that triggers the dialog */}
       <Dialog.Trigger>
-        <Button variant="soft" style={{ position: "fixed", bottom: 20, right: 20 }}>
-          + Add Challenge
+        <Button
+          variant="classic"
+          className="fixed bottom-7 right-7 w-16 h-16 rounded-full hover:bg-primary/90 shadow-md transition"
+        >
+          + 
         </Button>
       </Dialog.Trigger>
 
-      {/* The dialog content (overlay, panel, etc.) */}
-      <Dialog.Content>
-        <Dialog.Title>Add Challenge</Dialog.Title>
-        <Dialog.Description>
-          Fill out the new challenge info below:
+      <Dialog.Content className="p-6 bg-card border shadow-lg rounded space-y-4 max-w-sm">
+        <Dialog.Title className="text-lg font-semibold">
+          Add Challenge
+        </Dialog.Title>
+        <Dialog.Description className="text-sm text-muted-foreground">
+          Fill out challenge info
         </Dialog.Description>
 
-        <label className="block mt-2">
-          Name
+        <label className="block">
+          <span className="text-sm">Name</span>
           <input
-            className="border w-full p-1 mt-1"
+            className="w-full border-b focus:outline-none focus:ring-2 focus:ring-ring transition py-1 px-2"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </label>
-
-        <label className="block mt-2">
-          Flag
+        <label className="block">
+          <span className="text-sm">Flag</span>
           <input
-            className="border w-full p-1 mt-1"
+            className="w-full border-b focus:outline-none focus:ring-2 focus:ring-ring transition py-1 px-2"
             value={flag}
             onChange={(e) => setFlag(e.target.value)}
           />
         </label>
-
-        <label className="block mt-2 mb-4">
-          Reward
+        <label className="block">
+          <span className="text-sm">Reward</span>
           <input
-            className="border w-full p-1 mt-1"
+            className="w-full border-b focus:outline-none focus:ring-2 focus:ring-ring transition py-1 px-2"
             value={reward}
             onChange={(e) => setReward(e.target.value)}
           />
         </label>
 
-        <div className="flex justify-end gap-2">
-          <Button onClick={handleAddChallenge}>Submit</Button>
+        <div className="flex justify-end gap-2 pt-2">
+          <Button onClick={handleAddChallenge} variant="outline">
+            Submit
+          </Button>
           <Dialog.Close>
             <Button variant="ghost">Close</Button>
           </Dialog.Close>

@@ -17,25 +17,39 @@ export default function InvisibleDiv({
   const [flag, setFlag] = useState<string | null>(null);
 
   async function handleClick() {
-    // e.g. some web3 call or fetch to get the flag
+    // e.g. a web3 or an API call
     setFlag("ExampleFlag{12345}");
   }
 
   return (
-    <Card className="max-w-xl mx-auto p-4 space-y-4 mt-8" size="2" variant="surface">
+    <Card
+      size="3"
+      variant="surface"
+      className="max-w-xl mx-auto mt-8 shadow-lg p-6 space-y-4"
+    >
       {/* Header */}
       <div>
-        <h2 className="text-lg font-bold">{name}</h2>
-        <p className="text-sm text-gray-500">Problem: {problem}</p>
+        <h2 className="text-xl font-semibold tracking-tight">{name}</h2>
+        <p className="text-sm text-muted-foreground">
+          Problem: {problem}
+        </p>
       </div>
 
-      {/* Body (content) */}
+      {/* Body */}
       <div>
-        <p>This is the “InvisibleDiv” for challengeKey: {challengeKey}</p>
-        <Button variant="soft" onClick={handleClick} className="mt-2">
+        <p>
+          This is the “InvisibleDiv” logic for challengeKey: {challengeKey}.
+        </p>
+        <Button
+          variant="outline"
+          className="mt-2 hover:bg-secondary hover:text-secondary-foreground"
+          onClick={handleClick}
+        >
           Obtain The Flag
         </Button>
-        {flag && <p className="mt-2 text-green-600">{flag}</p>}
+        {flag && (
+          <p className="mt-2 text-green-600 font-semibold">{flag}</p>
+        )}
       </div>
     </Card>
   );
