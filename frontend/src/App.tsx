@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { Theme } from "@radix-ui/themes";
 
-function App() {
-  const [count, setCount] = useState(0)
+// context
+import { UserContextProvider } from "./components/context/UserContext";
 
+// pages
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Challenges from "./pages/Challenges";
+import ChallengeDetails from "./pages/ChallengeDetails";
+import Leaderboard from "./pages/Leaderboard";
+import UserPage from "./pages/User";
+
+// UI
+import Nav from "./components/ui/Nav";
+// import { Toaster } from "./components/ui/toaster";  // from your old code
+import "./index.css";
+
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Theme appearance="light" accentColor="blue" radius="large">
+      <UserContextProvider>
+        <Nav />
+        <div style={{ marginTop: "5rem", padding: "1rem" }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/challenges" element={<Challenges />} />
+            <Route path="/challenge/:id" element={<ChallengeDetails />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/users/:id" element={<UserPage />} />
+          </Routes>
+        </div>
+        {/* <Toaster /> */}
+      </UserContextProvider>
+    </Theme>
+  );
 }
-
-export default App
