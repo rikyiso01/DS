@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import { useMetamask } from "../context/MetamaskContext";
 import { CONTRACT_ADDRESS } from "../constants";
 import abi from "../assets/abi.json";
 
-interface Player {
-  address: string;
-  score: string;
-}
-
 export default function Leaderboard() {
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { provider, userAddress } = useMetamask();
+  const [players, setPlayers] = useState<{ address: string; score: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!userAddress) {
+      setLoading(false);
+      return;
+    }
+
     (async () => {
       setLoading(true);
       try {
-        const provider = new ethers.BrowserProvider((window as any).ethereum);
         const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
         const [addresses, scores] = await contract.getScores();
         const data = addresses.map((addr: string, i: number) => ({
@@ -30,16 +31,28 @@ export default function Leaderboard() {
       }
       setLoading(false);
     })();
-  }, []);
+  }, [provider, userAddress]);
 
-  if (loading) return <p>Loading leaderboard...</p>;
+  if (loading) return <p className="mt-16 text-center">Loading leaderboard...</p>;
+
+  if (!userAddress) {
+    return (
+      <div className="mt-16 text-center">
+        <p className="text-gray-600 mb-4">
+          Please connect your wallet to see the leaderboard.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="text-2xl text-center mb-4">Leaderboard</h1>
-      <table className="mx-auto border text-left">
+    <div className="mt-16 px-4">
+      <h1 className="text-2xl text-center mb-8 text-sky-500 font-bold">
+        Leaderboard
+      </h1>
+      <table className="mx-auto border text-left text-sm">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-gray-100">
             <th className="px-4 py-2 border">Pos</th>
             <th className="px-4 py-2 border">Player</th>
             <th className="px-4 py-2 border">Score</th>

@@ -1,94 +1,69 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useMetamask } from "../components/context/MetamaskContext";
+import React, { useEffect, useState } from "react";
+import { useMetamask } from "../context/MetamaskContext";
 import coding from "../assets/coding.png";
 import maths from "../assets/maths.png";
 import security from "../assets/security.png";
-import { useEffect, useState } from "react";
 
-const SLIDE_DURATION = 4000;
+const slides = [
+  {
+    text: "Test and enhance your skills in coding, mathematics, and security!",
+    image: coding,
+  },
+  {
+    text: "Submit your flags to our smart contract and see your score skyrocket!",
+    image: maths,
+  },
+  {
+    text: "New challenges appear regularly. Get ready to compete and have fun!",
+    image: security,
+  },
+];
 
-type Slide = {
-  text: string;
-  image: string;
-};
+const SLIDE_DURATION = 3000;
 
 export default function Home() {
   const { userAddress } = useMetamask();
-  const slides: Slide[] = [
-    {
-      text: "SmartChallenge is an innovative platform designed to test and enhance your skills in coding, mathematics, and security. Our challenges are designed to push your limits and inspire creativity.",
-      image: coding,
-    },
-    {
-      text: "Upon successful completion of each challenge, you'll receive a flag. Submit this flag along with your player's address to our smart contract, and watch as your score updates on our live competition scoreboard.",
-      image: maths,
-    },
-    {
-      text: "New challenges will be added regularly, each with their own flags. You'll have to figure them out on your own! Good luck, and may the best mind win!",
-      image: security,
-    },
-  ];
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Auto-rotate slides
   useEffect(() => {
-    const interval = setInterval(() => {
+    const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % slides.length);
     }, SLIDE_DURATION);
-    return () => clearInterval(interval);
-  }, [slides.length]);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <div className="mt-20 px-4 text-center">
-      {/* Page heading */}
-      <h1 className="text-sky-500 text-2xl font-bold mb-6">
-        Welcome to SmartChallenge@DIBRIS!
+    <div className="text-center">
+      <h1 className="text-sky-500 text-2xl font-bold my-8">
+        Welcome to SmartChallenge (refactored)!
       </h1>
-
-      {/* Slides container: fixed height so nothing overlaps */}
       <div className="relative mx-auto max-w-xl h-80 overflow-hidden rounded shadow-lg">
-        {slides.map((slide, index) => (
+        {slides.map((slide, i) => (
           <div
-            key={index}
-            className={`
-              absolute inset-0 flex flex-col items-center justify-center p-4
-              ${
-                index === currentIndex
-                  ? // Animate in this slide with tailwindcss-animate
-                    "block animate-in fade-in duration-500"
-                  : "hidden"
-              }
-            `}
+            key={i}
+            className={`absolute inset-0 flex flex-col items-center justify-center p-4 transition-opacity duration-700 ${
+              i === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
           >
             <img
               src={slide.image}
               alt="Slide"
               className="mx-auto mb-4 max-h-40 object-contain"
             />
-            <p className="text-base text-foreground px-2">
-              {slide.text}
-            </p>
+            <p className="text-base text-foreground">{slide.text}</p>
           </div>
         ))}
       </div>
 
-      {/* Connect Wallet or show user address */}
       <div className="mt-8">
-        {!userAddress ? (
-          <Link
-            to="/login"
-            className="inline-block bg-secondary text-secondary-foreground px-4 py-2 rounded hover:bg-secondary/90 transition font-medium"
-          >
-            Connect Wallet to Start!
-          </Link>
-        ) : (
-          <p className="text-sm text-muted-foreground font-medium">
+        {userAddress ? (
+          <p className="text-sm text-muted-foreground">
             You are user:{" "}
-            <span className="font-semibold text-foreground">
-              {userAddress}
-            </span>
+            <span className="font-semibold text-foreground">{userAddress}</span>
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Connect your wallet to start your challenge journey!
           </p>
         )}
       </div>
