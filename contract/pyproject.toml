@@ -8,3 +8,5 @@ dependencies = [
     "eth-ape>=0.8.22",
 ]
 
+[tool.ape.compile]
+output_extra = ["ABI"]
