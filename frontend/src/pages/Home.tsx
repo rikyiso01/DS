@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../components/context/UserContext";
+import { useMetamask } from "../components/context/MetamaskContext";
 import coding from "../assets/coding.png";
 import maths from "../assets/maths.png";
 import security from "../assets/security.png";
@@ -14,7 +14,7 @@ type Slide = {
 };
 
 export default function Home() {
-  const { userAddress } = useUser();
+  const { userAddress } = useMetamask();
   const slides: Slide[] = [
     {
       text: "SmartChallenge is an innovative platform designed to test and enhance your skills in coding, mathematics, and security. Our challenges are designed to push your limits and inspire creativity.",

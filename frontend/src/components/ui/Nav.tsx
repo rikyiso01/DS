@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
-import { useUser } from "../context/UserContext";
+import { useMetamask } from "../context/MetamaskContext";
 import ProfileButton from "./ProfileButton";
 import scLogo from "../../assets/sc.png";
 
 export default function Nav() {
-    const { userAddress } = useUser();
+    const { userAddress } = useMetamask();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
   

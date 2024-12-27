@@ -1,10 +1,10 @@
 import React from "react";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../components/context/UserContext";
+import { useMetamask } from "../components/context/MetamaskContext";
 
 export default function Login() {
-  const { setUserAddress } = useUser();
+  const { setMetamask, setUserAddress } = useMetamask();
   const navigate = useNavigate();
 
   async function connectMetaMask() {
@@ -15,6 +15,8 @@ export default function Login() {
     const provider = new ethers.BrowserProvider((window as any).ethereum);
     const signer = await provider.getSigner();
     const address = await signer.getAddress();
+
+    setMetamask(provider, signer, address);
     setUserAddress(address);
     localStorage.setItem("userAddress", address);
     navigate("/challenges");

@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ethers } from "ethers";
-import { CONTRACT_ADDRESS } from "../lib/constants";
+import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../lib/constants";
 import abi from "../assets/abi.json";
+import { useMetamask } from "../components/context/MetamaskContext";
 
 export default function ChallengeDetails() {
   const { id } = useParams();
+  const { provider } = useMetamask();
   const [challenge, setChallenge] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !provider) return;
     (async () => {
       setLoading(true);
       try {
-        const provider = new ethers.InfuraProvider("goerli", "YOUR_INFURA_KEY");
         const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
-
         const allChallenges = await contract.getChallenges();
         const target = allChallenges.find((c: any[]) => c[0].toString() === id);
         if (target) {
-          const pinataBase = "https://gateway.pinata.cloud/ipfs/";
-          const cidUrl = pinataBase + target[3];
+          const cidUrl = IPFS_BASE_URL + target[3];
           const data = await fetch(cidUrl).then((r) => r.json());
           setChallenge({
             key: +target[0],
@@ -37,7 +36,7 @@ export default function ChallengeDetails() {
       }
       setLoading(false);
     })();
-  }, [id]);
+  }, [id, provider]);
 
   if (loading) return <p>Loading challenge...</p>;
   if (!challenge) return <p>Challenge not found!</p>;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
-import { useUser } from "../components/context/UserContext";
-import { CONTRACT_ADDRESS } from "../lib/constants"; // or define
+import { useMetamask } from "../components/context/MetamaskContext";
+import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../lib/constants"; // or define
 import abi from "../assets/abi.json";
 import AddChallenge from "../components/ui/AddChallenge"; // You can adapt
 import ChallengeCard from "../components/ui/ChallengeCard"; 
@@ -10,30 +10,30 @@ import ChallengeCard from "../components/ui/ChallengeCard";
 
 export default function Challenges() {
   const navigate = useNavigate();
-  const { userAddress } = useUser();
+  const { provider, userAddress } = useMetamask();
   const [challenges, setChallenges] = useState<any[]>([]);
   const [owner, setOwner] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!provider) {
+      navigate("/login");
+      return;
+    }
+
     if (!userAddress) {
       navigate("/login");
       return;
     }
     (async () => {
       try {
-        const provider = new ethers.InfuraProvider("goerli", "YOUR_INFURA_KEY");
         const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
-        const own = await contract.getOwner();
-        setOwner(own);
-
+        const owner = await contract.owner();
+        setOwner(owner);
         const chainChallenges = await contract.getChallenges();
-        // Suppose each challenge = [id, ???, reward, ipfsHash]
-        const pinataBase = "https://gateway.pinata.cloud/ipfs/";
-
         const list = await Promise.all(
           chainChallenges.map(async (ch: any[]) => {
-            const cidUrl = pinataBase + ch[3];
+            const cidUrl = IPFS_BASE_URL + ch[3];
             const data = await fetch(cidUrl).then((r) => r.json());
             return {
               key: +ch[0],
@@ -50,7 +50,7 @@ export default function Challenges() {
       }
       setLoading(false);
     })();
-  }, [userAddress, navigate]);
+  }, [provider, userAddress, navigate]);
 
   if (loading) return <p>Loading challenges...</p>;
 

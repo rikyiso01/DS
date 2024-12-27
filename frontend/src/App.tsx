@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { Theme } from "@radix-ui/themes";
 
 // context
-import { UserContextProvider } from "./components/context/UserContext";
+import { MetamaskContextProvider } from "./components/context/MetamaskContext";
 
 // pages
 import Home from "./pages/Home";
@@ -21,20 +21,20 @@ import "./index.css";
 export default function App() {
   return (
     <Theme appearance="light" accentColor="blue" radius="large">
-      <UserContextProvider>
-        <Nav />
-        <div style={{ marginTop: "5rem", padding: "1rem" }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/challenges" element={<Challenges />} />
-            <Route path="/challenge/:id" element={<ChallengeDetails />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/users/:id" element={<UserPage />} />
-          </Routes>
-        </div>
+        <MetamaskContextProvider>
+          <Nav />
+          <div style={{ marginTop: "5rem", padding: "1rem" }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/challenges" element={<Challenges />} />
+              <Route path="/challenge/:id" element={<ChallengeDetails />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/users/:id" element={<UserPage />} />
+            </Routes>
+          </div>
+        </MetamaskContextProvider>
         {/* <Toaster /> */}
-      </UserContextProvider>
     </Theme>
   );
 }

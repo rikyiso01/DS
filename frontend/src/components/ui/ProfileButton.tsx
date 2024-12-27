@@ -2,10 +2,10 @@
 import React from "react";
 import { LogOut } from "lucide-react";
 import { Button } from "@radix-ui/themes"; // direct from Radix Themes
-import { useUser } from "../context/UserContext";
+import { useMetamask } from "../context/MetamaskContext";
 
 export default function ProfileButton() {
-    const { userAddress, setUserAddress } = useUser();
+    const { userAddress, setUserAddress } = useMetamask();
     if (!userAddress) return null;
   
     function handleSignOut() {

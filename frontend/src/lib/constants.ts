@@ -1,1 +1,2 @@
-export const CONTRACT_ADDRESS = "0x795aCbf5D411d8a8271b38108CD628F0525FE73a";
+export const CONTRACT_ADDRESS = import.meta.env.CONTRACT_ADDRESS;
+export const IPFS_BASE_URL = import.meta.env.IPFS_BASE_URL;
