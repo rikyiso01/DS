@@ -14,6 +14,8 @@ services:
       - ./ipfs/init.sh:/container-init.d/init.sh:ro
     ports:
       - 8080:8080
+    depends_on:
+      - challenge2
 
   chain:
     network_mode: host
@@ -42,3 +44,27 @@ services:
       APE_ACCOUNTS_account1_PASSPHRASE: "12345678"
       APE_ACCOUNTS_account2_PASSPHRASE: "12345678"
 
+  challenge2:
+    build: ./challenge2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    ports:
+      - 8081:80
+    volumes:
+      - ./challenge2:/var/www/html:ro
+    depends_on:
+      - challenge2-db
+  challenge2-db:
+    image: mysql:8.0.32-oracle
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes;
+      - MYSQL_PASSWORD=test
+      - MYSQL_USER=test
+      - MYSQL_DATABASE=test
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ./challenge2/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
