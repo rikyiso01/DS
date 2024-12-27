@@ -4,8 +4,8 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
-      VITE_IPFS_BASE_URL: ${IPFS_BASE_URL:-http://127.0.0.1:8080/ipfs}
+      VITE_CONTRACT_ADDRESS: ${VITE_CONTRACT_ADDRESS}
+      VITE_IPFS_BASE_URL: ${VITE_IPFS_BASE_URL:-http://127.0.0.1:8080/ipfs}
 
   ipfs:
     image: docker.io/ipfs/kubo:latest
