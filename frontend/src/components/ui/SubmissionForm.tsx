@@ -1,60 +1,66 @@
+// src/components/ui/SubmissionForm.tsx
 import React, { useState } from "react";
 import { Card, Button } from "@radix-ui/themes";
+import { ethers } from "ethers";
+import { useMetamask } from "../context/MetamaskContext";
+import { CONTRACT_ADDRESS } from "../../lib/constants";
+import abi from "../../assets/abi.json";
 
 interface SubmissionFormProps {
   challengeKey: number;
   name: string;
   problem: string;
-  apiUrl: string;
 }
 
 export default function SubmissionForm({
   challengeKey,
   name,
   problem,
-  apiUrl,
 }: SubmissionFormProps) {
+  const { provider } = useMetamask();
   const segments = problem.split("...");
   const [inputs, setInputs] = useState(() => Array(segments.length - 1).fill(""));
-
   const [resultMessage, setResultMessage] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Example logic
-    const userSolution = inputs.join(" ");
-    const correctSolution = "PretendSolution";
-    if (userSolution === correctSolution) {
-      setResultMessage("Correct solution! Flag{abc123}");
-    } else {
-      setResultMessage("Incorrect solution!");
+    // The user typed something into these input fields
+    // Potentially you'd transform them into a signature or do some logic
+    if (!provider) {
+      setResultMessage("Not connected to Metamask");
+      return;
+    }
+    try {
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
+
+      // Combine user input into a "signature" for demonstration
+      const userSignature = inputs.join("_");
+      const tx = await contract.submitFlag(challengeKey, userSignature); // In reality, must be bytes
+      await tx.wait();
+
+      setResultMessage("Flag submitted successfully! Challenge solved!");
+    } catch (err: any) {
+      console.error("Error submitting solution:", err);
+      setResultMessage(`Error: ${err.message}`);
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card
-        size="3"
-        variant="surface"
-        className="max-w-xl mx-auto mt-8 shadow-lg p-6 space-y-4"
-      >
-        {/* Header */}
+      <Card className="max-w-xl mx-auto mt-4 shadow p-6 space-y-4" size="2" variant="surface">
         <div>
           <h2 className="text-xl font-semibold">{name}</h2>
-          <p className="text-sm text-muted-foreground">
-            Challenge Key: {challengeKey}
-          </p>
+          <p className="text-sm text-muted-foreground">Challenge Key: {challengeKey}</p>
         </div>
-
-        {/* Body: problem with fill-in segments */}
-        <div className="space-y-2">
+        <div>
           {segments.map((seg, i) => (
-            <div key={i}>
-              <p className="inline">{seg}</p>
+            <div key={i} className="mb-2">
+              <p className="inline mr-2">{seg}</p>
               {i < segments.length - 1 && (
                 <input
                   type="text"
-                  className="border-b border-border bg-transparent px-2 py-1 focus:outline-none focus:ring-2 focus:ring-ring transition"
+                  className="border-b px-1 focus:outline-none focus:ring-2 focus:ring-ring transition"
                   value={inputs[i]}
                   onChange={(e) => {
                     const next = [...inputs];
@@ -66,9 +72,7 @@ export default function SubmissionForm({
             </div>
           ))}
         </div>
-
-        {/* Footer */}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Button type="submit" variant="outline">
             Submit
           </Button>
@@ -76,7 +80,7 @@ export default function SubmissionForm({
       </Card>
 
       {resultMessage && (
-        <p className="mt-4 text-center text-sm font-medium">
+        <p className="mt-4 text-center text-sm font-medium text-gray-700">
           {resultMessage}
         </p>
       )}

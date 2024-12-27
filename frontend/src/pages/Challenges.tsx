@@ -119,9 +119,6 @@ export default function Challenges() {
           />
         ))}
       </div>
-
-      {/* If user is owner, show AddChallenge button */}
-      {userAddress.toLowerCase() === owner.toLowerCase() && <AddChallenge />}
     </div>
   );
 }
