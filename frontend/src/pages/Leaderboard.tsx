@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { CONTRACT_ADDRESS } from "../lib/constants";
+import { CONTRACT_ADDRESS } from "../constants";
 import abi from "../assets/abi.json";
 
 interface Player {

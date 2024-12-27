@@ -26,8 +26,12 @@ export function MetamaskContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [userAddress, setUserAddress] = useState("");
-  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+  const [userAddress, setUserAddress] = useState(() => {
+    return localStorage.getItem("userAddress") || "";
+  });
+  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(() => {
+    return new ethers.BrowserProvider((window as any).ethereum);
+  });
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
 
   function setMetamask(

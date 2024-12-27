@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { useMetamask } from "../components/context/MetamaskContext";
-import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../lib/constants";
+import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../constants";
 import abi from "../assets/abi.json";
 import AddChallenge from "../components/ui/AddChallenge";
 
