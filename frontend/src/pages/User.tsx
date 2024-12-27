@@ -6,7 +6,6 @@ export default function UserPage() {
   return (
     <div className="mt-20 text-center">
       <h1>User ID: {id}</h1>
-      <p>Profile or user info here...</p>
     </div>
   );
 }
