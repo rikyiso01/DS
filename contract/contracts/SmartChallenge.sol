@@ -10,6 +10,7 @@ contract SmartChallenge {
         address publicFlag;
         uint reward;
         uint score;
+        string ipfscid;
     }
 
     struct ChallengesSet{
@@ -34,7 +35,7 @@ contract SmartChallenge {
 
     event GetOwner(address owner);
     event ChallengeSubmitted(string returnValue);
-    event ChallengeAdded(uint indexed challengeId, address _publicFlag, uint _reward, uint _score);
+    event ChallengeAdded(uint indexed challengeId, address _publicFlag, uint _reward, uint _score,string ipfscid);
 
 
     modifier onlyOwner() {
@@ -145,11 +146,11 @@ contract SmartChallenge {
         }
     }
 
-    function addChallenge(address _flag, uint _reward, uint _score) public payable onlyOwner {
+    function addChallenge(address _flag, uint _reward, uint _score,string memory ipfscid) public payable onlyOwner {
         require(msg.value==_reward,"You need to store the reward in the contract");
         uint challengeId=challenges.length;
-        challenges.push(Challenge(_flag, _reward,  _score));
-        emit ChallengeAdded(challengeId, _flag, _reward, _score);
+        challenges.push(Challenge(_flag, _reward,  _score,ipfscid));
+        emit ChallengeAdded(challengeId, _flag, _reward, _score,ipfscid);
     }
 
     function getChallenges() public view returns (Challenge[] memory) {

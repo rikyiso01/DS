@@ -19,7 +19,15 @@ class SmartChallenge(Protocol):
     def getOwner(self) -> TestAccount: ...
     def getChallenges(self) -> list[object]: ...
     def addChallenge(
-        self, flag: str, reward: int, score: int, /, *, sender: TestAccount, value: int
+        self,
+        flag: str,
+        reward: int,
+        score: int,
+        ipfscid: str,
+        /,
+        *,
+        sender: TestAccount,
+        value: int,
     ): ...
     def submitFlag(
         self, challengeId: int, signature: str, /, *, sender: TestAccount
@@ -36,6 +44,7 @@ class Challenge:
     reward: int
     score: int
     id: int
+    ipfscid: str
 
 
 @fixture
@@ -101,13 +110,16 @@ def get_last_event_field(event: Any, field: str) -> Any:
 def add_challenge(contract: SmartChallenge, owner: TestAccount) -> Challenge:
     reward = randint(0, 10**6)
     score = randint(0, 10**6)
+    ipfscid = ""
     private_flag = get_private_flag()
     public_flag = get_public_flag(private_flag)
-    contract.addChallenge(public_flag, reward, score, sender=owner, value=reward)
+    contract.addChallenge(
+        public_flag, reward, score, ipfscid, sender=owner, value=reward
+    )
     id: int = contract.ChallengeAdded.query("*", start_block=-1).iloc[-1][
         "event_arguments"
     ]["challengeId"]
-    return Challenge(private_flag, public_flag, reward, score, id)
+    return Challenge(private_flag, public_flag, reward, score, id, ipfscid)
 
 
 def test_getOwner(project: LocalProject, owner: TestAccount):
@@ -127,6 +139,7 @@ def test_addChallenge(project: LocalProject, owner: TestAccount):
             "publicFlag": challenge.public_flag,
             "reward": challenge.reward,
             "score": challenge.score,
+            "ipfscid": challenge.ipfscid,
         }
     ]
     assert actual == expected
