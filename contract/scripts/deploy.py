@@ -1,6 +1,8 @@
 from ape import accounts, project
 import os
+from ape.api.accounts import AccountAPI
 from ape_accounts import import_account_from_private_key
+from tests.test_smartchallenge import SmartChallenge
 
 # alias = "my-account"
 # passphrase = "ciao"
@@ -12,9 +14,9 @@ from ape_accounts import import_account_from_private_key
 
 
 # You need an account to deploy, as it requires a transaction.
-account = accounts.load("my-account")  # NOTE: <ALIAS> refers to your account alias!
-contract = project.SmartChallenge.deploy(sender=account)
-contract = project.SmartChallengeProxy.deploy(contract.address,sender=account)
 
-print(contract.address)
-print(account.balance)
+def deploy(account:AccountAPI)->str:
+    contract= project.SmartChallenge.deploy(sender=account)
+    contract = project.SmartChallengeProxy.deploy(contract.address,sender=account)
+    print("Contract deployed at",contract.address)
+    return contract.address

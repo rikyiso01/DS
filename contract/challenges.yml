@@ -1,0 +1,11 @@
+- title: Sanity
+  private_flag: "0x4b986c55ea9496ccf30b437bb4577e5c6003049f4ce399061f52e074e97b5b92"
+  score: 10
+  reward: 500
+  ipfscid: "QmVWVjY2VQWZgGb3J3APdBZDgYg3vhffVmrghQ4HZKsBZ9"
+
+- title: sqlinjection
+  private_flag: "0xc28a2a5b185d0abd05458437fd553204d3e922e030484527ed3fef74fbaab3ec"
+  score: 30
+  reward: 1000
+  ipfscid: "QmVWVjY2VQWZgGb3J3APdBZDgYg3vhffVmrghQ4HZKsBZ9"

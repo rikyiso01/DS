@@ -10,3 +10,14 @@ dependencies = [
 
 [tool.ape.compile]
 output_extra = ["ABI"]
+
+[[tool.ape.networks.custom]]
+name="test"
+ecosystem="ethereum"
+# base_ecosystem_plugin= "node"
+chain_id= 1337
+# default_provider="node"
+
+[tool.ape.node.ethereum.test]
+uri="http://chain"
+

@@ -2,10 +2,10 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "4173:4173"
+      - "5173:5173"
     environment:
-      CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
-      IPFS_BASE_URL: ${IPFS_BASE_URL}
+      VITE_CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
+      VITE_IPFS_BASE_URL: ${IPFS_BASE_URL:-http://127.0.0.1:8080/ipfs}
 
   ipfs:
     image: docker.io/ipfs/kubo:latest
@@ -14,4 +14,31 @@ services:
       - ./ipfs/init.sh:/container-init.d/init.sh:ro
     ports:
       - 8080:8080
+
+  chain:
+    network_mode: host
+    build: chain
+    ports:
+      - 8545:8545
+    environment:
+      PRIVATE_KEY: ${PRIVATE_KEY}
+      PRIVATE_KEY2: ${PRIVATE_KEY2}
+
+  contract-tests:
+    image: docker.io/apeworx/ape
+    command: test
+    volumes:
+      - ./contract:/home/harambe/project:ro
+
+  contract-deploy:
+    network_mode: host
+    image: docker.io/apeworx/ape
+    command: run deploy-all --network ${NETWORK:-::node}
+    volumes:
+      - ./contract:/home/harambe/project:ro
+    environment:
+      PRIVATE_KEY: ${PRIVATE_KEY}
+      PRIVATE_KEY2: ${PRIVATE_KEY2}
+      APE_ACCOUNTS_account1_PASSPHRASE: "12345678"
+      APE_ACCOUNTS_account2_PASSPHRASE: "12345678"
 
