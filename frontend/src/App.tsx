@@ -5,7 +5,7 @@ import { MetamaskContextProvider } from "./context/MetamaskContext";
 // Pages
 import Home from "./pages/Home";
 import Challenges from "./pages/Challenges";
-import ChallengeDetails from "./pages/ChallengeDetails";
+import ChallengeDetails from "./pages/Challenge";
 import Leaderboard from "./pages/Leaderboard";
 
 // Components
