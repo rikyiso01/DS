@@ -5,3 +5,4 @@ services:
       - "4173:4173"
     environment:
       CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
+      IPFS_BASE_URL: ${IPFS_BASE_URL}
