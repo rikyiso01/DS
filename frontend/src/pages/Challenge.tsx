@@ -78,15 +78,7 @@ export default function ChallengeDetails() {
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
       const messageHash=await contract.getMessageHash(userAddress,challengeData.index);
-      console.log("MESSAGE HASH",messageHash)
       const signature=web3.eth.accounts.sign(messageHash, userFlag).signature;
-
-  //     const flagSigner = new ethers.Wallet(userFlag, provider);
-  //     const fromHexString = (hexString:string) =>
-  // Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
-  //     const signature=await flagSigner.signMessage(fromHexString(messageHash));
-      // const signature=ethers.Signature.from(signedMessage).serialized;
-      console.log("SIGNATURE",signature);
 
       const tx = await contract.submitFlag(challengeData.index,signature);
       await tx.wait();

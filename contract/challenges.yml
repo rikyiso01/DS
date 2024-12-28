@@ -1,7 +1,7 @@
 - title: Sanity
   private_flag: "0x4b986c55ea9496ccf30b437bb4577e5c6003049f4ce399061f52e074e97b5b92"
   score: 10
-  reward: 500
+  reward: 21143597742187200
   ipfscid: "QmeAhRo5MaSJMUGfDT9jJpjx2AMRAocGJzLVT5GTAy3URK"
 
 - title: sqlinjection

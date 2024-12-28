@@ -5,7 +5,7 @@ from ape.api.accounts import AccountAPI
 from tests.test_smartchallenge import SmartChallenge
 
 
-def add_challenge(address:str,account:AccountAPI,public_flag:str,score:int,reward:int,ipfscid:str):
+def add_challenge(address:str,account:AccountAPI,public_flag:str,reward:int,score:int,ipfscid:str):
     contract :SmartChallenge= Contract(
         address,  # type: ignore
         contract_type=project.SmartChallenge.contract_type,  # type: ignore
