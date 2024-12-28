@@ -70,7 +70,10 @@ def get_flag_signature(
 ) -> str:
     w3 = Web3(EthereumTesterProvider())
     msg = contract.getMessageHash(address, id)
+    print(msg)
+    print(msg.hex())
     message = encode_defunct(msg)
+    print(message)
     signed_message = w3.eth.account.sign_message(message, private_key=private_flag)
     return signed_message.signature
 

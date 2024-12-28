@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
+import {Web3} from "web3";
 import { useMetamask } from "../context/MetamaskContext";
 import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../constants";
 import abi from "../assets/abi.json";
 import { Button, Card } from "@radix-ui/themes";
+
+const web3 = new Web3(Web3.givenProvider);
 
 export default function ChallengeDetails() {
   const { id } = useParams();
@@ -72,7 +75,18 @@ export default function ChallengeDetails() {
     try {
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
-      const tx = await contract.submitFlag(challengeData.index, userFlag);
+      const messageHash=await contract.getMessageHash(userAddress,challengeData.index);
+      console.log("MESSAGE HASH",messageHash)
+      const signature=web3.eth.accounts.sign(messageHash, userFlag).signature;
+
+  //     const flagSigner = new ethers.Wallet(userFlag, provider);
+  //     const fromHexString = (hexString:string) =>
+  // Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
+  //     const signature=await flagSigner.signMessage(fromHexString(messageHash));
+      // const signature=ethers.Signature.from(signedMessage).serialized;
+      console.log("SIGNATURE",signature);
+
+      const tx = await contract.submitFlag(challengeData.index,signature);
       await tx.wait();
 
       // If transaction succeeded, user typed correct flag
