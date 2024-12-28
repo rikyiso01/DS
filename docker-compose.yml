@@ -6,6 +6,8 @@ services:
     environment:
       VITE_CONTRACT_ADDRESS: ${VITE_CONTRACT_ADDRESS}
       VITE_IPFS_BASE_URL: ${VITE_IPFS_BASE_URL:-http://127.0.0.1:8080/ipfs}
+    volumes:
+      - ./frontend/src:/app/src:ro
 
   ipfs:
     image: docker.io/ipfs/kubo:latest

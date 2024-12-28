@@ -23,7 +23,9 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "~5.6.2",
     "vaul": "^1.1.2",
-    "vite": "^6.0.5"
+    "vite": "^6.0.5",
+    "web3": "^4.16.0",
+    "web3-eth-personal": "^4.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

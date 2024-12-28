@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
+import {Web3} from "web3";
 import { useMetamask } from "../context/MetamaskContext";
 import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../constants";
 import abi from "../assets/abi.json";
 import { Button, Card } from "@radix-ui/themes";
 import { useNotification } from "../context/NotificationContext";
+
+const web3 = new Web3(Web3.givenProvider);
 
 export default function ChallengeDetails() {
   const { notify } = useNotification();
@@ -74,7 +77,10 @@ export default function ChallengeDetails() {
     try {
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
-      const tx = await contract.submitFlag(challengeData.index, userFlag);
+      const messageHash=await contract.getMessageHash(userAddress,challengeData.index);
+      const signature=web3.eth.accounts.sign(messageHash, userFlag).signature;
+
+      const tx = await contract.submitFlag(challengeData.index,signature);
       await tx.wait();
       setIsSolved(true);
       notify({
