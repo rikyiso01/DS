@@ -6,10 +6,12 @@ import { useMetamask } from "../context/MetamaskContext";
 import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../constants";
 import abi from "../assets/abi.json";
 import { Button, Card } from "@radix-ui/themes";
+import { useNotification } from "../context/NotificationContext";
 
 const web3 = new Web3(Web3.givenProvider);
 
 export default function ChallengeDetails() {
+  const { notify } = useNotification();
   const { id } = useParams();
   const navigate = useNavigate();
   const { provider, userAddress } = useMetamask();
@@ -88,10 +90,17 @@ export default function ChallengeDetails() {
 
       const tx = await contract.submitFlag(challengeData.index,signature);
       await tx.wait();
-
-      // If transaction succeeded, user typed correct flag
       setIsSolved(true);
+      notify({
+        title: "Challenge Solved!",
+        description: "Your flag submission was successful!",
+        type: "success",
+      });
     } catch (err: any) {
+      notify({
+        title: "Submission Failed",
+        type: "error",
+      });
       console.error("Submit flag error:", err);
       setErrorMsg(`Incorrect or failed: ${err.message}`);
     }

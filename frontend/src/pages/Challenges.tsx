@@ -4,8 +4,10 @@ import { ethers } from "ethers";
 import { useMetamask } from "../context/MetamaskContext";
 import { CONTRACT_ADDRESS, IPFS_BASE_URL } from "../constants";
 import abi from "../assets/abi.json";
+import { useNotification } from "../context/NotificationContext";
 
 export default function Challenges() {
+  const { notify } = useNotification();
   const { provider, userAddress } = useMetamask();
   const navigate = useNavigate();
   const [challenges, setChallenges] = useState<any[]>([]);
@@ -66,6 +68,11 @@ export default function Challenges() {
 
         setChallenges(newList);
       } catch (err) {
+        notify({
+          title: "Error Loading Challenges",
+          description: "Unable to fetch challenges from the blockchain.",
+          type: "error",
+        });
         console.error("Error loading challenges:", err);
       }
       setLoading(false);
