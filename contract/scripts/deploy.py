@@ -16,7 +16,7 @@ from tests.test_smartchallenge import SmartChallenge
 # You need an account to deploy, as it requires a transaction.
 
 def deploy(account:AccountAPI)->str:
-    contract= project.SmartChallenge.deploy(sender=account)
-    contract = project.SmartChallengeProxy.deploy(contract.address,sender=account)
+    contract= project.SmartChallenge.deploy(sender=account,required_confirmations=0)
+    contract = project.SmartChallengeProxy.deploy(contract.address,sender=account,required_confirmations=0)
     print("Contract deployed at",contract.address)
     return contract.address

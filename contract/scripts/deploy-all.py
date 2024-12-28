@@ -21,3 +21,4 @@ def main():
             challenge["score"],
             challenge["ipfscid"],
         )
+    print(contract)

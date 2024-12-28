@@ -13,5 +13,5 @@ COPY ./package.json ./pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --shamefully-hoist
 
 COPY ./hardhat.config.js ./
-CMD ["pnpm","exec","hardhat","node"]
+CMD ["pnpm","exec","hardhat","node","--hostname","0.0.0.0"]
 

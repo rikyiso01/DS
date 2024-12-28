@@ -23,6 +23,7 @@
             pkgs.uv
             pkgs.docker
             pkgs.docker-compose
+            pkgs.just
           ];
         };
       }
