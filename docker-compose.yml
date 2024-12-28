@@ -18,7 +18,6 @@ services:
       - challenge2
 
   chain:
-    network_mode: host
     build: chain
     ports:
       - 8545:8545
@@ -31,13 +30,14 @@ services:
     command: test
     volumes:
       - ./contract:/home/harambe/project:ro
+      - solc-cache:/root/.solcx
 
   contract-deploy:
-    network_mode: host
-    image: docker.io/apeworx/ape
+    build: ./contract
     command: run deploy-all --network ${NETWORK:-::node}
     volumes:
       - ./contract:/home/harambe/project
+      - solc-cache:/root/.solcx
     environment:
       PRIVATE_KEY: ${PRIVATE_KEY:-0x4b986c55ea9496ccf30b437bb4577e5c6003049f4ce399061f52e074e97b5b92}
       PRIVATE_KEY2: ${PRIVATE_KEY2:-0xc28a2a5b185d0abd05458437fd553204d3e922e030484527ed3fef74fbaab3ec}
@@ -68,3 +68,6 @@ services:
       - TZ=Europe/Rome
     volumes:
       - ./challenge2/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  solc-cache:

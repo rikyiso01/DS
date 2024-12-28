@@ -10,5 +10,5 @@ def add_challenge(address:str,account:AccountAPI,public_flag:str,score:int,rewar
         address,  # type: ignore
         contract_type=project.SmartChallenge.contract_type,  # type: ignore
     )
-    contract.addChallenge(public_flag,reward,score,ipfscid,sender=account,value=reward)
+    contract.addChallenge(public_flag,reward,score,ipfscid,sender=account,value=reward,required_confirmations=0)
 
