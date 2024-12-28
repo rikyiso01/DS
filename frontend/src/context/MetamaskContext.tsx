@@ -6,6 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { ethers } from "ethers";
+import { useNotification } from "./NotificationContext";
 
 interface MetamaskContextType {
   userAddress: string;
@@ -24,6 +25,7 @@ const MetamaskContext = createContext<MetamaskContextType>({
 });
 
 export function MetamaskContextProvider({ children }: { children: ReactNode }) {
+  const { notify } = useNotification();
   const [userAddress, setUserAddress] = useState("");
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
@@ -38,7 +40,7 @@ export function MetamaskContextProvider({ children }: { children: ReactNode }) {
 
   async function connectWallet() {
     if (!(window as any).ethereum) {
-      alert("MetaMask not found. Please install it.");
+      notify({ title: "MetaMask not found", description: "Please install MetaMask.", type: "error" });
       return;
     }
     try {
@@ -50,8 +52,10 @@ export function MetamaskContextProvider({ children }: { children: ReactNode }) {
       setSigner(_signer);
       setUserAddress(_userAddress);
       localStorage.setItem("userAddress", _userAddress);
+      notify({ title: "Wallet Connected", description: "You are now connected!", type: "success" });
     } catch (error) {
-      console.error("connectWallet error:", error);
+      notify({ title: "Connection Failed", type: "error" });
+      console.error("Connection error:", error);
     }
   }
 
@@ -60,6 +64,7 @@ export function MetamaskContextProvider({ children }: { children: ReactNode }) {
     setSigner(null);
     setProvider(null);
     localStorage.removeItem("userAddress");
+    notify({ title: "Wallet Disconnected", type: "info" });
   }
 
   return (
