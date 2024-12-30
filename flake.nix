@@ -24,6 +24,9 @@
             pkgs.docker
             pkgs.docker-compose
             pkgs.just
+            pkgs.flyctl
+            pkgs.pandoc
+            pkgs.python312Packages.weasyprint
           ];
         };
       }
