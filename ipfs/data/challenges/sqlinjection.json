@@ -1,6 +1,6 @@
 {
-    "name": "SQL injection",
-    "description": "Simple sql injection",
+    "name": "Login Bypass",
+    "description": "Login without having an account\n\nhttps://challenge2.fly.dev/login.php",
     "category": "web",
     "problem": ""
 }

@@ -1,11 +1,17 @@
-- title: Sanity
+- title: sanity
   private_flag: "0x4b986c55ea9496ccf30b437bb4577e5c6003049f4ce399061f52e074e97b5b92"
   score: 10
-  reward: 21143597742187200
-  ipfscid: "QmeAhRo5MaSJMUGfDT9jJpjx2AMRAocGJzLVT5GTAy3URK"
+  reward: 10
+  ipfscid: "bafkreidnx7flbvvu2jmcoxq3enoaqeswev43ntad45sv365vh6qqs2iruq"
 
 - title: sqlinjection
   private_flag: "0xc28a2a5b185d0abd05458437fd553204d3e922e030484527ed3fef74fbaab3ec"
   score: 30
-  reward: 1000
-  ipfscid: "QmTaktBMgrcAmXnarr1nykaTYMbAANKt1ofToMKq94xbKY"
+  reward: 100
+  ipfscid: "bafkreif77wiuhi6ctkl5i3cxooosupwsyyzff3ernksf3iaqui2g47dije"
+
+- title: shop
+  private_flag: "0xcb4fcc83860638f2df6e5ec5aeee959966a3557f788a351ab6b2d84a203aa60a"
+  score: 30
+  reward: 100
+  ipfscid: "bafkreihaa5axg7whfi3gxmd65cobbmsv7mvysq7p7f3uus3udih5mpl2sq"

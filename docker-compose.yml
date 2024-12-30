@@ -9,6 +9,15 @@ services:
     volumes:
       - ./frontend/src:/app/src:ro
 
+  frontend-build:
+    build: ./frontend
+    command: pnpm build
+    environment:
+      VITE_CONTRACT_ADDRESS: ${VITE_CONTRACT_ADDRESS}
+      VITE_IPFS_BASE_URL: ${VITE_IPFS_BASE_URL:-http://127.0.0.1:8080/ipfs}
+    volumes:
+      - ./frontend/dist:/app/dist
+
   ipfs:
     image: docker.io/ipfs/kubo:latest
     volumes:
@@ -38,7 +47,6 @@ services:
     build: ./contract
     command: run deploy-all --network ${NETWORK:-::node}
     volumes:
-      - ./contract:/home/harambe/project
       - solc-cache:/root/.solcx
     environment:
       PRIVATE_KEY: ${PRIVATE_KEY:-0x4b986c55ea9496ccf30b437bb4577e5c6003049f4ce399061f52e074e97b5b92}
@@ -46,18 +54,14 @@ services:
       APE_ACCOUNTS_account1_PASSPHRASE: "12345678"
       APE_ACCOUNTS_account2_PASSPHRASE: "12345678"
 
+  generate-flag:
+    build: ./contract
+    command: run generate-flag
+
   challenge2:
     build: ./challenge2
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Rome
     ports:
       - 8081:80
-    volumes:
-      - ./challenge2:/var/www/html:ro
-    depends_on:
-      - challenge2-db
   challenge2-db:
     image: mysql:8.0.32-oracle
     environment:

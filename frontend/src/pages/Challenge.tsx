@@ -75,10 +75,13 @@ export default function ChallengeDetails() {
     if (!challengeData || !provider) return;
     setErrorMsg("");
     try {
+      if(!userFlag.startsWith("flag{")||!userFlag.endsWith("}"))
+        throw new Error("Malformed flag");
+      const flag=userFlag.substring("flag{".length,userFlag.length-"}".length);
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
       const messageHash=await contract.getMessageHash(userAddress,challengeData.index);
-      const signature=web3.eth.accounts.sign(messageHash, userFlag).signature;
+      const signature=web3.eth.accounts.sign(messageHash, flag).signature;
 
       const tx = await contract.submitFlag(challengeData.index,signature);
       await tx.wait();

@@ -44,16 +44,20 @@ export default function Challenges() {
     (async () => {
       setLoading(true);
       try {
+        console.log(CONTRACT_ADDRESS)
         const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
         const chainChallenges = await contract.getChallenges();
+        console.log(chainChallenges);
 
         const newList: any[] = await Promise.all(
           chainChallenges.map(async (c: any, index: number) => {
             // c => [publicFlag, reward, score, ipfscid]
             const ipfsHash = c[3];
+            console.log("Attempting fetch",IPFS_BASE_URL+ipfsHash);
             const ipfsData = await fetch(IPFS_BASE_URL + ipfsHash).then((r) =>
               r.json()
             );
+            console.log("Done fetch");
             const solved = await contract.isChallengeSolved(userAddress, index);
             return {
               index,
