@@ -121,6 +121,8 @@ address, preserving state and balances for users.
 
 ## Frontend
 
+[https://rikyiso01.github.io/DS](https://rikyiso01.github.io/DS)
+
 Since all challenge details and flags are stored on the contract
 (with challenge metadata on IPFS), we no longer need a Next.js server-side layer to
 interact with them. Instead, we:
