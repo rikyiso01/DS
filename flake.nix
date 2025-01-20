@@ -27,6 +27,7 @@
             pkgs.flyctl
             pkgs.pandoc
             pkgs.python312Packages.weasyprint
+            pkgs.zip
           ];
         };
       }

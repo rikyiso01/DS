@@ -17,13 +17,16 @@ with to find the solution (“flag”).
   stored on the blockchain, it is possible to better keep track of player performances
   and allow them to complete a challenge even if the original ctf website is taken down.
 
-## Contract
+## Contract (1st assignment)
 
 Contract deployed and verified at:
 [0x794ECccCD0b6E0eE8526d425f38b36C5EE916744](https://sepolia.etherscan.io/address/0x794ECccCD0b6E0eE8526d425f38b36C5EE916744).
 
 Proxy contract deployed and verified at:
 [0xEC1B8e3c1a34E16765da0D7F1A8676E45fD584b8](https://sepolia.etherscan.io/address/0xEC1B8e3c1a34E16765da0D7F1A8676E45fD584b8).
+
+Old contract deployed at:
+[0x795aCbf5D411d8a8271b38108CD628F0525FE73a](https://sepolia.etherscan.io/address/0x795aCbf5D411d8a8271b38108CD628F0525FE73a).
 
 ### Overview
 
@@ -51,8 +54,10 @@ which are paid directly from the contract’s balance.
 
 ### Changes from the previous version
 
-- Fix 1. and 2. by using public-key cryptography, the flag to find is a private key which
+- Fix 1. by using public-key cryptography, the flag to find is a private key which
    is used to sign a message which is checked by the contract using a public key.
+- Fix 2. by using the private-key to sign a message which contains the address of the
+   sender, the flag is never revealed, and the message cannot be reused by the attacker.
 - Fix 3. by giving the reward only to the first solver.
 - Fix 4. by reducing the number of variables to the absolute minimum.
 
@@ -119,7 +124,7 @@ address, preserving state and balances for users.
   Because the proxy never changes its address, you don’t have to migrate user balances
   or challenge data to a new contract address every time you deploy an upgrade.
 
-## Frontend
+## Frontend (3rd assignment)
 
 [https://rikyiso01.github.io/DS](https://rikyiso01.github.io/DS)
 
